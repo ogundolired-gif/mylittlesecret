@@ -1,0 +1,780 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>I have a secret… 👀</title>
+<meta name="description" content="Some of you already know. Most of you probably don't. 👀">
+<meta name="theme-color" content="#FBF0EC">
+<meta property="og:type" content="website">
+<meta property="og:title" content="I have a secret… 👀">
+<meta property="og:description" content="Some of you already know. Most of you probably don't. Tap to open the box.">
+<meta property="og:image" content="/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<style>html,body{margin:0}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..800;1,6..96,400..700&family=Jost:wght@300;400;500;600&display=swap">
+<style>
+/* Layout: one-screen "secret door" (rose velvet box → choice) handing off to two editorial reveal pages (#women / #men).
+   Mobile-first. Deliberately one light, feminine look: blush paper, rose velvet, soft gold. */
+:root{
+  --bg:#FBF0EC;           /* blush paper */
+  --bg-2:#F6E2DD;         /* deeper blush band */
+  --surface:#FFF9F6;      /* cards */
+  --rose:#C2457A;         /* primary accent */
+  --rose-deep:#7A1E47;    /* headlines */
+  --blush:#F3C3D1;        /* soft pink */
+  --gold:#B88A4C;         /* metal details */
+  --text:#3A1828;         /* body text */
+  --muted:#8A6170;        /* secondary text */
+  --line:rgba(122,30,71,.14);
+  --display:"Bodoni Moda","Didot","Bodoni 72",Georgia,serif;
+  --body:"Jost","Futura","Avenir Next","Segoe UI",system-ui,sans-serif;
+  --ease:cubic-bezier(.22,.8,.24,1);
+  color-scheme:light;
+}
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+html{background:var(--bg)}
+body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit}
+button{font:inherit;color:inherit}
+img{max-width:100%;display:block}
+:focus-visible{outline:2px solid var(--rose);outline-offset:3px;border-radius:4px}
+h1,h2,h3{font-family:var(--display);font-weight:500;line-height:1.05;margin:0;text-wrap:balance;letter-spacing:-.01em;color:var(--rose-deep)}
+p{margin:0}
+.eyebrow{font-size:.72rem;letter-spacing:.32em;text-transform:uppercase;color:var(--rose);font-weight:500}
+.wrap{width:100%;max-width:1080px;margin-inline:auto;padding-inline:20px}
+
+#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:40}
+.veil{position:fixed;inset:0;pointer-events:none;z-index:50;opacity:0;transition:opacity .45s var(--ease);
+  background:radial-gradient(60% 50% at 50% 45%,#fff,#FFE9EF 45%,#F3C3D1 100%)}
+.veil.men{background:radial-gradient(60% 50% at 50% 45%,#fff,#F8EAD9 45%,#E2C29A 100%)}
+.veil.on{opacity:1}
+
+/* ---------- Buttons: primary (rose) > secondary (outline) > tertiary (text link) ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.6em;min-height:54px;padding:0 28px;border-radius:999px;
+  font-family:var(--body);font-weight:600;font-size:.84rem;letter-spacing:.18em;text-transform:uppercase;text-decoration:none;cursor:pointer;border:0;
+  transition:transform .3s var(--ease),box-shadow .3s var(--ease),background .3s}
+.btn svg{width:20px;height:20px;flex:none}
+.btn-primary{background:linear-gradient(180deg,#D9628F,var(--rose) 60%,#A93566);color:#fff;box-shadow:0 12px 28px -12px rgba(194,69,122,.7),inset 0 1px 0 rgba(255,255,255,.35)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 18px 38px -14px rgba(194,69,122,.85),inset 0 1px 0 rgba(255,255,255,.35)}
+.btn-secondary{background:var(--surface);color:var(--rose-deep);box-shadow:inset 0 0 0 1.5px rgba(194,69,122,.55)}
+.btn-secondary:hover{background:#FFEFF4;transform:translateY(-2px)}
+.link-tert{display:inline-flex;align-items:center;gap:.5em;color:var(--rose);text-decoration:none;font-size:.8rem;letter-spacing:.2em;text-transform:uppercase;font-weight:500;border-bottom:1px solid rgba(194,69,122,.35);padding-bottom:4px}
+.link-tert:hover{border-color:var(--rose)}
+.link-tert .arr{transition:transform .3s var(--ease)}
+.link-tert:hover .arr{transform:translateX(4px)}
+
+/* ---------- HOME: the secret door ---------- */
+#home{min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding-block:48px 64px;position:relative;isolation:isolate}
+#home::before{content:"";position:fixed;inset:0;z-index:-1;
+  background:
+    radial-gradient(65% 42% at 50% 60%,rgba(243,195,209,.9),transparent 70%),
+    radial-gradient(40% 30% at 12% 8%,rgba(232,200,150,.35),transparent 70%),
+    radial-gradient(50% 40% at 92% 96%,rgba(226,130,165,.35),transparent 70%),
+    var(--bg)}
+.intro{display:grid;gap:18px;justify-items:center;transition:opacity .5s var(--ease),transform .5s var(--ease)}
+.intro h1{font-size:clamp(2.6rem,11vw,5.4rem);font-style:italic;letter-spacing:-.02em}
+.intro h1 span{font-style:normal;font-weight:700;letter-spacing:.02em;color:var(--rose)}
+.intro p{font-size:clamp(1.05rem,4.2vw,1.25rem);color:var(--muted);font-weight:300;max-width:22ch}
+.intro p b{color:var(--text);font-weight:400}
+
+.stage{margin-top:28px;display:grid;justify-items:center;gap:22px;transition:transform .6s var(--ease),margin .6s var(--ease)}
+.box-btn{--bw:min(62vw,270px);background:none;border:0;padding:24px 24px 10px;cursor:pointer;position:relative;-webkit-tap-highlight-color:transparent}
+.box-float{animation:float 4.2s ease-in-out infinite;position:relative;transition:transform .5s var(--ease)}
+.box-btn:hover .box-float,.box-btn:focus-visible .box-float{transform:translateY(-6px) rotate(-1deg)}
+@keyframes float{0%,100%{translate:0 0}50%{translate:0 -10px}}
+.box{position:relative;width:var(--bw);height:calc(var(--bw)*.84);perspective:900px}
+.box-shadow{position:absolute;left:14%;right:14%;bottom:-18px;height:24px;border-radius:50%;background:radial-gradient(closest-side,rgba(122,30,71,.35),transparent);animation:shadow 4.2s ease-in-out infinite}
+@keyframes shadow{0%,100%{transform:scaleX(1);opacity:.9}50%{transform:scaleX(.86);opacity:.6}}
+.velvet{background:
+   radial-gradient(120% 90% at 28% 12%,rgba(255,235,242,.45),transparent 45%),
+   radial-gradient(130% 120% at 50% 0%,#F09AB8 0%,#D3578A 42%,#8E2352 100%)}
+.velvet::after{content:"";position:absolute;inset:0;border-radius:inherit;mix-blend-mode:soft-light;opacity:.5;pointer-events:none;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='v'><feTurbulence type='fractalNoise' baseFrequency='1.3' numOctaves='3'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 .85  0 0 0 0 .9  0 0 0 .9 0'/></filter><rect width='100%' height='100%' filter='url(%23v)'/></svg>")}
+.box-base{position:absolute;left:0;right:0;bottom:0;height:70%;border-radius:4px 4px 16px 16px;
+  box-shadow:inset 0 0 0 1.5px rgba(214,176,112,.9),inset 0 0 0 6px rgba(122,30,71,.12),inset 0 -24px 40px rgba(90,15,45,.35),0 30px 50px -22px rgba(122,30,71,.55)}
+.box-base::before{content:"";position:absolute;inset:10px;border-radius:2px 2px 10px 10px;border:1px solid rgba(240,210,160,.6)}
+.clasp{position:absolute;top:-2px;left:50%;width:34px;height:40px;transform:translateX(-50%);border-radius:0 0 8px 8px;z-index:2;
+  background:linear-gradient(160deg,#FBEAC6,#D3AE6E 45%,#9C7438 70%,#EED3A0);box-shadow:0 4px 10px rgba(90,15,45,.35),inset 0 1px 0 rgba(255,255,255,.7)}
+.clasp::after{content:"";position:absolute;left:50%;top:14px;width:7px;height:14px;transform:translateX(-50%);
+  background:radial-gradient(circle at 50% 3.5px,#5A1235 3.4px,transparent 3.6px),linear-gradient(#5A1235,#5A1235) 50% 100%/3px 8px no-repeat}
+.box-glow{position:absolute;left:4%;right:4%;top:20%;height:34%;border-radius:50%;opacity:.4;filter:blur(10px);transform-origin:50% 100%;
+  background:radial-gradient(ellipse at 50% 85%,#fff,rgba(255,228,236,.85) 35%,rgba(240,200,150,.35) 60%,transparent 72%);
+  transition:opacity .8s var(--ease),transform 1s var(--ease);animation:leak 3s ease-in-out infinite}
+@keyframes leak{0%,100%{opacity:.35}50%{opacity:.65}}
+.seam{position:absolute;left:3%;right:3%;top:29.5%;height:2px;border-radius:2px;background:linear-gradient(90deg,transparent,#fff,transparent);filter:blur(1px);box-shadow:0 0 14px 3px rgba(255,230,200,.8);animation:leak 3s ease-in-out infinite}
+.box-lid{position:absolute;left:-4%;right:-4%;top:8%;height:23%;border-radius:12px 12px 4px 4px;transform-origin:50% 100%;z-index:3;
+  box-shadow:inset 0 0 0 1.5px rgba(214,176,112,.95),inset 0 3px 0 rgba(255,235,242,.3),inset 0 -10px 18px rgba(90,15,45,.3),0 8px 14px -6px rgba(90,15,45,.45);
+  transition:transform 1s cubic-bezier(.3,1.25,.4,1) .2s}
+.box-lid::before{content:"";position:absolute;left:12px;right:12px;bottom:7px;height:1px;background:linear-gradient(90deg,transparent,rgba(240,210,160,.95),transparent)}
+.bow{position:absolute;left:50%;top:-30%;width:64px;height:30px;transform:translateX(-50%);z-index:4;transition:opacity .4s}
+.hint{font-family:var(--display);font-style:italic;font-size:1.1rem;color:var(--muted);transition:opacity .4s}
+.open-cta{transition:opacity .4s var(--ease),transform .4s var(--ease)}
+
+#home.is-opening .intro{opacity:0;transform:translateY(-18px)}
+#home.is-opening .stage{transform:scale(1.12)}
+#home.is-opening .box-float,#home.is-open .box-float{animation:none}
+#home.is-opening .box-lid,#home.is-open .box-lid{transform:translateY(-58%) rotateX(68deg) rotateZ(-5deg)}
+#home.is-opening .bow,#home.is-open .bow{opacity:0}
+#home.is-opening .box-glow,#home.is-open .box-glow{animation:none;opacity:1;transform:scale(1.35,2.3)}
+#home.is-opening .seam,#home.is-open .seam{opacity:0}
+#home.is-opening .hint,#home.is-opening .open-cta{opacity:0;transform:translateY(8px);pointer-events:none}
+#home.is-open .stage{margin-top:0;transform:scale(.6);margin-block:-48px -40px}
+#home.is-open .box-btn{cursor:default}
+#home.is-open .hint,#home.is-open .open-cta{display:none}
+
+.question{display:grid;gap:14px;justify-items:center;width:100%;max-width:760px}
+.question > *{animation:rise .8s var(--ease) both}
+.question > :nth-child(2){animation-delay:.12s}
+.question > :nth-child(3){animation-delay:.28s}
+@keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.question h2{font-size:clamp(2rem,8.5vw,3.6rem)}
+.question h2 em{color:var(--rose)}
+.doors{display:grid;grid-template-columns:1fr;gap:14px;width:100%;margin-top:18px}
+@media (min-width:640px){.doors{grid-template-columns:1fr 1fr;gap:20px}}
+.door{position:relative;display:grid;align-content:end;gap:6px;min-height:210px;padding:22px;border-radius:22px;overflow:hidden;text-align:left;text-decoration:none;isolation:isolate;color:#fff;
+  box-shadow:0 0 0 1px rgba(214,176,112,.5),0 24px 44px -26px rgba(122,30,71,.65);
+  transition:transform .45s var(--ease),box-shadow .45s var(--ease),opacity .45s var(--ease)}
+@media (min-width:640px){.door{min-height:320px;padding:28px}}
+.door canvas{position:absolute;inset:0;width:100%;height:100%;z-index:-2;transition:filter .45s,transform .8s var(--ease)}
+.door::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(90,15,45,0) 15%,rgba(90,15,45,.82) 95%)}
+.door.m::before{background:linear-gradient(180deg,rgba(60,30,15,0) 15%,rgba(60,30,15,.85) 95%)}
+.door .tag{position:absolute;top:18px;left:22px;font-size:.66rem;letter-spacing:.3em;text-transform:uppercase;color:rgba(255,255,255,.85)}
+.door h3{font-size:clamp(1.9rem,7vw,2.5rem);font-weight:600;color:#fff}
+.door p{color:rgba(255,255,255,.9);font-weight:300}
+.door .go{margin-top:10px;display:inline-flex;gap:.55em;align-items:center;font-size:.8rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:#FFE3EC}
+.door .go .arr{transition:transform .35s var(--ease)}
+.door .spark{position:absolute;top:16px;right:18px;width:18px;height:18px;opacity:0;transform:scale(.4) rotate(-30deg);transition:all .45s var(--ease);color:#fff}
+.door:hover,.door:focus-visible{transform:translateY(-6px);box-shadow:0 0 0 2px #fff,0 0 0 4px rgba(194,69,122,.5),0 30px 60px -24px rgba(194,69,122,.6)}
+.door:hover canvas,.door:focus-visible canvas{filter:brightness(1.18) saturate(1.1);transform:scale(1.04)}
+.door:hover .go .arr,.door:focus-visible .go .arr{transform:translateX(6px)}
+.door:hover .spark,.door:focus-visible .spark{opacity:1;transform:scale(1) rotate(0)}
+.doors.choosing .door{opacity:0;transform:scale(.96);pointer-events:none}
+.doors.choosing .door.chosen{opacity:1;transform:scale(1.05);box-shadow:0 0 0 2px #fff,0 0 80px 10px rgba(243,195,209,.9);z-index:2}
+
+/* ---------- REVEAL PAGES ---------- */
+.page{background:var(--bg)}
+.view{animation:pagein .7s var(--ease) both}
+@keyframes pagein{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-block:20px}
+.back{display:inline-flex;align-items:center;gap:.5em;text-decoration:none;color:var(--muted);font-size:.78rem;letter-spacing:.18em;text-transform:uppercase}
+.back:hover{color:var(--rose)}
+.back .mini{display:inline-block;width:16px;height:12px;border-radius:2px 2px 4px 4px;background:linear-gradient(#E27BA2,#B23A6C);box-shadow:inset 0 0 0 1px #E2BE80;position:relative;top:-1px}
+.wordmark{font-family:var(--display);font-weight:700;font-size:.95rem;letter-spacing:.32em;text-transform:uppercase;color:var(--rose-deep)}
+
+.reveal-hero{padding-block:28px 36px;display:grid;gap:18px}
+.reveal-hero .whisper{font-family:var(--display);font-style:italic;font-size:clamp(1.3rem,5vw,1.8rem);color:var(--rose)}
+.reveal-hero h1{font-size:clamp(2.6rem,10vw,5.6rem);font-weight:600;letter-spacing:-.02em;max-width:15ch}
+.reveal-hero h1 i{font-weight:400;color:var(--rose)}
+.reveal-hero .sub{font-size:clamp(1.1rem,4.4vw,1.35rem);color:var(--muted);font-weight:300;max-width:38ch}
+
+/* before / after */
+.ba-wrap{display:grid;gap:10px;justify-items:center}
+.ba{position:relative;width:100%;max-width:560px;aspect-ratio:3/4;border-radius:24px;overflow:hidden;background:#eee;
+  box-shadow:0 0 0 1px var(--line),0 40px 70px -40px rgba(122,30,71,.55);touch-action:pan-y;user-select:none}
+.ba img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none}
+.ba .before{object-position:42% 45%}
+.ba .after{object-position:50% 45%;clip-path:inset(0 0 0 var(--pos,50%))}
+.ba .lbl{position:absolute;top:16px;padding:6px 12px;border-radius:999px;font-size:.66rem;letter-spacing:.26em;text-transform:uppercase;font-weight:600;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.ba .lbl.l{left:14px;background:rgba(58,24,40,.65);color:#fff}
+.ba .lbl.r{right:14px;background:rgba(194,69,122,.9);color:#fff}
+.ba .handle{position:absolute;top:0;bottom:0;left:var(--pos,50%);width:3px;margin-left:-1.5px;background:#fff;box-shadow:0 0 14px rgba(122,30,71,.4);pointer-events:none}
+.ba .knob{position:absolute;top:50%;left:50%;width:48px;height:48px;transform:translate(-50%,-50%);border-radius:50%;background:#fff;color:var(--rose);display:grid;place-items:center;box-shadow:0 6px 18px rgba(122,30,71,.4)}
+.ba input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:ew-resize;margin:0}
+.ba-note{font-size:.85rem;color:var(--muted)}
+
+/* brand reveal */
+.brand{padding-block:72px 32px;text-align:center;display:grid;gap:16px;justify-items:center}
+.brand .mark{font-family:var(--display);font-weight:700;font-size:clamp(2.3rem,10vw,5.6rem);letter-spacing:.08em;line-height:.95;text-transform:uppercase;
+  background:linear-gradient(180deg,#D3578A 10%,var(--rose-deep) 85%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.brand .mark small{display:block;font-size:.32em;letter-spacing:.7em;margin-top:.5em;font-weight:500;color:var(--gold);-webkit-text-fill-color:var(--gold)}
+.brand .tagline{font-family:var(--display);font-style:italic;font-size:clamp(1.2rem,4.5vw,1.6rem);color:var(--rose-deep)}
+.brand p{color:var(--muted);max-width:34ch;font-size:1.08rem;font-weight:300}
+.rule{width:56px;height:1px;background:var(--gold)}
+
+/* offer ticket */
+.offer{padding-block:32px 64px}
+.ticket{display:grid;grid-template-columns:1fr;border-radius:24px;overflow:hidden;position:relative;
+  background:radial-gradient(120% 120% at 0% 0%,#FFE4EC,transparent 60%),var(--surface);
+  box-shadow:0 0 0 1px rgba(184,138,76,.45),0 40px 80px -50px rgba(122,30,71,.6)}
+@media (min-width:820px){.ticket{grid-template-columns:1.5fr 1fr}}
+.ticket-main{padding:32px 24px;display:grid;gap:20px;min-width:0}
+@media (min-width:820px){.ticket-main{padding:48px}}
+.ticket h2{font-size:clamp(1.6rem,5.5vw,2.3rem)}
+.qty{font-size:.86rem;letter-spacing:.26em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.price{font-family:var(--display);font-weight:700;font-size:clamp(3.8rem,17vw,6.4rem);line-height:.9;color:var(--rose);font-variant-numeric:lining-nums;letter-spacing:-.02em}
+.includes{list-style:none;padding:0;margin:0;display:grid;gap:10px}
+.includes li{display:flex;gap:12px;align-items:center;font-size:1.05rem}
+.includes li::before{content:"";flex:none;width:20px;height:20px;border-radius:50%;background:var(--rose) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><path d='M5.5 10.5l3 3 6-7' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>") center/14px no-repeat}
+.fine{font-size:.84rem;color:var(--muted);line-height:1.5;max-width:52ch}
+.ticket-stub{position:relative;padding:28px 24px 32px;display:grid;gap:18px;align-content:center;border-top:2px dashed rgba(184,138,76,.5);background:#FDEBEF}
+@media (min-width:820px){.ticket-stub{border-top:0;border-left:2px dashed rgba(184,138,76,.5);padding:48px 36px}}
+.ticket-stub::before,.ticket-stub::after{content:"";position:absolute;width:28px;height:28px;border-radius:50%;background:var(--bg);top:-15px}
+.ticket-stub::before{left:-14px}.ticket-stub::after{right:-14px}
+@media (min-width:820px){.ticket-stub::before{top:-14px;left:-15px}.ticket-stub::after{top:auto;bottom:-14px;left:-15px;right:auto}}
+.stub-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;border-bottom:1px solid var(--line);padding-bottom:10px}
+.stub-row span{font-size:.7rem;letter-spacing:.26em;text-transform:uppercase;color:var(--muted)}
+.stub-row b{font-family:var(--display);font-size:1.45rem;font-weight:600;color:var(--rose-deep);font-variant-numeric:lining-nums}
+.ticket-stub .btn{width:100%}
+.stub-num{font-size:.82rem;color:var(--muted);text-align:center}
+.stub-num b{color:var(--text);font-weight:500;user-select:all;font-variant-numeric:tabular-nums}
+
+/* wig sales */
+.shop{padding-block:72px;background:var(--bg-2);border-block:1px solid var(--line)}
+.shop-inner{display:grid;gap:28px}
+.shop-head{display:grid;gap:12px;max-width:620px}
+.shop-head h2{font-size:clamp(2rem,7vw,3.2rem)}
+.shop-head h2 i{color:var(--rose)}
+.shop-head p{color:var(--muted);font-weight:300;font-size:1.08rem}
+.wigs{display:grid;grid-template-columns:1fr;gap:16px}
+@media (min-width:640px){.wigs{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.wig{background:var(--surface);border-radius:20px;overflow:hidden;display:grid;box-shadow:0 0 0 1px var(--line),0 24px 40px -30px rgba(122,30,71,.5)}
+.wig .ph{aspect-ratio:4/5;overflow:hidden}
+.wig img{width:100%;height:100%;object-fit:cover;transition:transform .7s var(--ease)}
+.wig:hover img{transform:scale(1.04)}
+.wig .meta{padding:18px 18px 20px;display:grid;gap:4px}
+.wig h3{font-size:1.4rem;font-weight:600}
+.wig .ask{font-size:.82rem;color:var(--muted)}
+.wig .link-tert{justify-self:start;margin-top:10px}
+.shop-cta{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.shop-cta small{color:var(--muted);font-size:.85rem}
+
+/* services */
+.services{padding-block:72px;display:grid;gap:24px}
+.services h2{font-size:clamp(1.9rem,6.5vw,2.9rem)}
+.svc{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.svc li{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:16px 0;border-bottom:1px solid var(--line)}
+.svc h3{font-family:var(--display);font-size:clamp(1.15rem,4.4vw,1.45rem);font-weight:600;color:var(--text)}
+.svc span{font-size:.68rem;letter-spacing:.22em;text-transform:uppercase;color:var(--rose);white-space:nowrap;text-align:right}
+
+/* men page */
+.men-split{display:grid;grid-template-columns:1fr;gap:28px;align-items:center;padding-block:8px 72px}
+@media (min-width:820px){.men-split{grid-template-columns:1fr 1fr;gap:56px}}
+.portrait{position:relative;aspect-ratio:4/5;max-width:100%;border-radius:220px 220px 24px 24px;overflow:hidden;margin:0;
+  box-shadow:0 0 0 1px rgba(184,138,76,.5),0 40px 70px -40px rgba(122,30,71,.6)}
+.portrait img{width:100%;height:100%;object-fit:cover;object-position:50% 28%}
+.men-copy{display:grid;gap:18px;min-width:0}
+.men-copy h2{font-size:clamp(2rem,8vw,3.4rem);font-weight:600}
+.men-copy .big{font-family:var(--display);font-style:italic;font-size:clamp(1.3rem,5vw,1.7rem);color:var(--rose)}
+.men-copy p{color:var(--muted);font-weight:300;font-size:1.08rem;max-width:40ch}
+.cta-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:8px}
+@media (max-width:480px){.cta-row .btn{flex:1 1 100%}}
+
+/* instagram */
+.ig{padding-block:72px;display:grid;gap:28px}
+.ig-head{display:grid;gap:14px;justify-items:start}
+@media (min-width:820px){.ig-head{grid-template-columns:1fr auto;align-items:end}}
+.ig h2{font-size:clamp(1.9rem,7vw,3rem)}
+.ig h2 i{color:var(--rose)}
+.ig p{color:var(--muted);max-width:44ch;font-weight:300}
+.ig .handle{font-family:var(--display);font-size:clamp(1.4rem,5vw,1.9rem);font-weight:600;color:var(--rose-deep);text-decoration:none}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}
+@media (min-width:760px){.grid{gap:10px}}
+.tile{position:relative;aspect-ratio:3/4;max-width:100%;border-radius:6px;overflow:hidden;display:block;text-decoration:none;background:var(--bg-2)}
+@media (min-width:760px){.tile{border-radius:12px}}
+.tile img{width:100%;height:100%;object-fit:cover;transition:transform .7s var(--ease)}
+.tile .ic{position:absolute;top:8px;right:8px;width:20px;height:20px;color:#fff;filter:drop-shadow(0 1px 3px rgba(0,0,0,.6))}
+.tile .play{position:absolute;left:50%;top:50%;width:44px;height:44px;transform:translate(-50%,-50%);border-radius:50%;background:rgba(255,255,255,.88);display:grid;place-items:center;color:var(--rose);box-shadow:0 6px 18px rgba(0,0,0,.3);transition:transform .35s var(--ease)}
+.tile .play svg{width:18px;height:18px;margin-left:3px}
+.tile .ov{position:absolute;inset:0;display:grid;place-content:center;gap:6px;text-align:center;opacity:0;background:rgba(122,30,71,.72);color:#fff;transition:opacity .35s var(--ease);padding:8px}
+.tile .ov b{font-family:var(--display);font-size:clamp(.85rem,2.6vw,1.1rem);font-weight:600}
+.tile .ov span{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase}
+.tile:hover .ov,.tile:focus-visible .ov{opacity:1}
+.tile:hover img{transform:scale(1.06)}
+.ig-foot{display:flex;justify-content:center}
+
+/* footer */
+footer{padding-block:56px 120px;background:linear-gradient(180deg,var(--bg-2),#F1D2D9);border-top:1px solid var(--line)}
+.foot{display:grid;gap:36px}
+@media (min-width:820px){.foot{grid-template-columns:1.3fr 1fr 1fr;align-items:start}}
+.foot .fm{font-family:var(--display);font-weight:700;font-size:1.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--rose-deep);line-height:1.1}
+.foot .ft{font-family:var(--display);font-style:italic;color:var(--muted);margin-top:6px}
+.foot h4{margin:0 0 12px;font-size:.68rem;letter-spacing:.3em;text-transform:uppercase;color:var(--rose);font-weight:500}
+.foot ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.foot ul a{text-decoration:none}
+.foot ul a:hover{color:var(--rose)}
+.foot .contact{display:grid;gap:8px}
+.foot .contact a{text-decoration:none}
+.foot .contact .num{user-select:all;font-variant-numeric:tabular-nums}
+.foot-bottom{margin-top:40px;font-size:.78rem;color:var(--muted);display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:space-between}
+
+/* floating WhatsApp */
+.fab{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:30;display:inline-flex;align-items:center;gap:10px;height:54px;padding:0 20px 0 14px;border-radius:999px;text-decoration:none;
+  background:#1F8A55;color:#fff;font-weight:600;font-size:.82rem;letter-spacing:.06em;box-shadow:0 12px 30px -10px rgba(31,90,60,.6),inset 0 0 0 1px rgba(255,255,255,.2);
+  transition:transform .4s var(--ease),opacity .4s var(--ease),background .3s}
+.fab svg{width:26px;height:26px;flex:none}
+.fab .t{display:grid}
+.fab .t span{grid-area:1/1;transition:opacity .3s,transform .3s var(--ease);white-space:nowrap}
+.fab .t span:last-child{opacity:0;transform:translateY(6px)}
+.fab:hover{background:#249c61}
+.fab:hover .t span:first-child{opacity:0;transform:translateY(-6px)}
+.fab:hover .t span:last-child{opacity:1;transform:none}
+.fab::before{content:"";position:absolute;inset:0;border-radius:inherit;animation:ping 2.8s ease-out infinite}
+@keyframes ping{0%{box-shadow:0 0 0 0 rgba(37,211,102,.45)}70%,100%{box-shadow:0 0 0 14px rgba(37,211,102,0)}}
+.fab.off{opacity:0;transform:translateY(20px);pointer-events:none}
+@media (max-width:480px){.fab{height:50px;padding:0 16px 0 12px;font-size:.76rem}}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+
+
+<canvas id="fx" aria-hidden="true"></canvas>
+<div class="veil" id="veil" aria-hidden="true"></div>
+
+<!-- =============== HOME / THE SECRET =============== -->
+<main id="home" class="wrap">
+  <div class="intro" id="intro">
+    <span class="eyebrow">Psst. Come closer.</span>
+    <h1>I have a <span>secret</span>…</h1>
+    <p>Some of you already know.<br><b>Most of you probably don't.</b> 👀</p>
+  </div>
+
+  <div class="stage" id="stage">
+    <button class="box-btn" id="boxBtn" type="button" aria-label="Open the box">
+      <div class="box-float">
+        <div class="box">
+          <div class="box-glow"></div>
+          <div class="box-base velvet"><span class="clasp"></span></div>
+          <div class="seam"></div>
+          <div class="box-lid velvet">
+            <svg class="bow" viewBox="0 0 64 30" aria-hidden="true"><defs><linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FBEAC6"/><stop offset=".6" stop-color="#D3AE6E"/><stop offset="1" stop-color="#9C7438"/></linearGradient></defs>
+              <path d="M32 18C24 4 8 2 6 12s14 10 26 6zM32 18c8-14 24-16 26-6s-14 10-26 6z" fill="url(#bg)"/><path d="M28 18l-6 12h6l4-8 4 8h6l-6-12z" fill="url(#bg)"/><circle cx="32" cy="17" r="4.5" fill="#E9CC93"/></svg>
+          </div>
+        </div>
+        <div class="box-shadow"></div>
+      </div>
+    </button>
+    <p class="hint">There's something inside…</p>
+    <button class="btn btn-primary open-cta" id="openCta" type="button">Open the box</button>
+  </div>
+
+  <section class="question" id="question" hidden aria-live="polite">
+    <span class="eyebrow">So… who are you?</span>
+    <h2>Are you a <em>woman</em> or a <em>man</em>?</h2>
+    <div class="doors" id="doors">
+      <a class="door" href="#women" data-door="women">
+        <canvas data-hair="doorW"></canvas>
+        <span class="tag">Door one</span>
+        <svg class="spark" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 0l2.4 9.6L24 12l-9.6 2.4L12 24l-2.4-9.6L0 12l9.6-2.4z"/></svg>
+        <h3>I'm a woman</h3>
+        <p>Show me the secret 👀</p>
+        <span class="go">Open my secret <span class="arr">→</span></span>
+      </a>
+      <a class="door m" href="#men" data-door="men">
+        <canvas data-hair="doorM"></canvas>
+        <span class="tag">Door two</span>
+        <svg class="spark" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 0l2.4 9.6L24 12l-9.6 2.4L12 24l-2.4-9.6L0 12l9.6-2.4z"/></svg>
+        <h3>I'm a man</h3>
+        <p>I think I know where this is going 😂</p>
+        <span class="go">Show me <span class="arr">→</span></span>
+      </a>
+    </div>
+  </section>
+</main>
+
+<!-- =============== #women =============== -->
+<div id="women" class="page" hidden>
+  <div class="wrap">
+    <nav class="topbar">
+      <a class="back" href="#back"><span aria-hidden="true">←</span> <span class="mini" aria-hidden="true"></span> Back to the secret</a>
+      <span class="wordmark">Glamforge</span>
+    </nav>
+
+    <header class="reveal-hero">
+      <p class="whisper">Okay girl… now you know. 👀💕</p>
+      <h1>That wig you stopped wearing? <i>She's not finished.</i></h1>
+      <p class="sub">You loved her once. Bring her to Glamforge and we'll wash, refresh and restyle her until she feels brand new again. So will you.</p>
+    </header>
+
+    <section class="ba-wrap" id="s-transformations" aria-label="Before and after">
+      <div class="ba" id="ba" style="--pos:50%">
+        <img class="before" src="img/before.jpg" alt="A tired, frizzy wig before its Glamforge revamp">
+        <img class="after" src="img/after.jpg" alt="The same style after a Glamforge revamp: smooth, glossy, bouncy curls">
+        <span class="lbl l">Before</span>
+        <span class="lbl r">After Glamforge</span>
+        <div class="handle"><span class="knob" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l-5 6 5 6M15 6l5 6-5 6"/></svg></span></div>
+        <input type="range" id="baRange" min="0" max="100" value="50" aria-label="Drag to compare before and after">
+      </div>
+      <p class="ba-note">Drag the slider to see the glow-up.</p>
+    </section>
+
+    <section class="brand">
+      <span class="rule"></span>
+      <h2 class="mark">Glamforge<small>Studios</small></h2>
+      <p class="tagline">Luxury in Every Strand.</p>
+      <p>We bring tired, old and forgotten wigs back to life.</p>
+    </section>
+
+    <section class="offer" id="s-revamp">
+      <div class="ticket">
+        <div class="ticket-main">
+          <span class="eyebrow">End-of-year wig revamp offer</span>
+          <h2>Three wigs in. Three wigs reborn.</h2>
+          <div>
+            <p class="qty">3 wigs for</p>
+            <p class="price">₦15,000</p>
+          </div>
+          <ul class="includes">
+            <li>Wash &amp; refresh</li>
+            <li>Restyling</li>
+            <li>Wig revival</li>
+          </ul>
+          <p class="fine">Colouring, major repairs and specialised services are not included in the ₦15,000 package.</p>
+        </div>
+        <aside class="ticket-stub">
+          <div class="stub-row"><span>Wigs</span><b>3</b></div>
+          <div class="stub-row"><span>Price</span><b>₦15,000</b></div>
+          <div class="stub-row"><span>Turnaround</span><b>7 days min.</b></div>
+          <a class="btn btn-primary" data-wa="women" href="#" target="_blank" rel="noopener">
+            <svg viewBox="0 0 32 32" aria-hidden="true"><use href="#i-wa"/></svg>Book your revamp</a>
+          <p class="stub-num">or message <b>08064453004</b> on WhatsApp</p>
+        </aside>
+      </div>
+    </section>
+  </div>
+
+  <section class="shop" id="s-shop">
+    <div class="wrap shop-inner">
+      <div class="shop-head">
+        <span class="eyebrow">Wig sales</span>
+        <h2>Ready for something <i>new?</i></h2>
+        <p>Shop beautiful wigs from Glamforge, styled and ready to wear. Lagos based, with nationwide delivery.</p>
+      </div>
+      <div class="wigs">
+        <article class="wig">
+          <div class="ph"><img src="img/men.jpg" alt="Glossy body-wave wig with a middle part" loading="lazy"></div>
+          <div class="meta"><h3>Body wave</h3><p class="ask">Price on WhatsApp</p>
+            <a class="link-tert" data-wa="shop" data-style="body wave" href="#" target="_blank" rel="noopener">Ask about this wig <span class="arr">→</span></a></div>
+        </article>
+        <article class="wig">
+          <div class="ph"><img src="img/ig6.jpg" alt="Long silky straight wig" loading="lazy" style="object-position:50% 60%"></div>
+          <div class="meta"><h3>Silky straight</h3><p class="ask">Price on WhatsApp</p>
+            <a class="link-tert" data-wa="shop" data-style="silky straight" href="#" target="_blank" rel="noopener">Ask about this wig <span class="arr">→</span></a></div>
+        </article>
+        <article class="wig">
+          <div class="ph"><img src="img/ig7.jpg" alt="Long curly wig on a mannequin" loading="lazy"></div>
+          <div class="meta"><h3>Curly</h3><p class="ask">Price on WhatsApp</p>
+            <a class="link-tert" data-wa="shop" data-style="curly" href="#" target="_blank" rel="noopener">Ask about this wig <span class="arr">→</span></a></div>
+        </article>
+      </div>
+      <div class="shop-cta">
+        <a class="btn btn-secondary" data-wa="shop" href="#" target="_blank" rel="noopener">See all wigs on WhatsApp</a>
+        <small>Tell us the length and style you want and we'll send options.</small>
+      </div>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <section class="services" id="s-services">
+      <span class="eyebrow">What we do</span>
+      <h2>Everything your hair needs, in one studio</h2>
+      <ul class="svc">
+        <li><h3>Wig revamping &amp; restoration</h3><span>3 for ₦15,000</span></li>
+        <li><h3>Premium wig sales</h3><span>Ask on WhatsApp</span></li>
+        <li><h3>Custom wig styling</h3><span>Ask for a quote</span></li>
+        <li><h3>Expert colouring</h3><span>Ask for a quote</span></li>
+        <li><h3>Lace work &amp; customisation</h3><span>Ask for a quote</span></li>
+        <li><h3>Precision ventilation</h3><span>Ask for a quote</span></li>
+        <li><h3>Wig consultation</h3><span>Ask on WhatsApp</span></li>
+      </ul>
+    </section>
+  </div>
+</div>
+
+<!-- =============== #men =============== -->
+<div id="men" class="page" hidden>
+  <div class="wrap">
+    <nav class="topbar">
+      <a class="back" href="#back"><span aria-hidden="true">←</span> <span class="mini" aria-hidden="true"></span> Back to the secret</a>
+      <span class="wordmark">Glamforge</span>
+    </nav>
+
+    <header class="reveal-hero">
+      <p class="whisper">Glamforge Studios · Luxury in Every Strand.</p>
+      <h1>Bro… you found the other side of the secret 😂</h1>
+      <p class="sub">If you have a wife, fiancée or girlfriend who loves beautiful hair… we might have just solved your gift problem.</p>
+    </header>
+
+    <section class="men-split">
+      <figure class="portrait"><img src="img/men.jpg" alt="Glossy black body-wave wig styled by Glamforge"></figure>
+      <div class="men-copy">
+        <span class="eyebrow">For someone special</span>
+        <h2>Buy her something she'll actually love.</h2>
+        <p class="big">A beautiful wig is always a good idea.</p>
+        <p>Tell us her style and your budget on WhatsApp and we'll help you pick. Nationwide delivery from Lagos.</p>
+        <div class="cta-row">
+          <a class="btn btn-primary" data-wa="men" href="#" target="_blank" rel="noopener">
+            <svg viewBox="0 0 32 32" aria-hidden="true"><use href="#i-wa"/></svg>Shop wigs</a>
+          <a class="btn btn-secondary" data-wa="men" href="#" target="_blank" rel="noopener">Ask about a wig</a>
+        </div>
+        <a class="link-tert" href="#women" style="justify-self:start;margin-top:6px">Or gift her the 3-wig revamp for ₦15,000 <span class="arr">→</span></a>
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- =============== shared: Instagram + footer =============== -->
+<div id="shared" class="page" hidden>
+  <section class="wrap ig" id="s-instagram">
+    <div class="ig-head">
+      <div style="display:grid;gap:12px">
+        <span class="eyebrow">Instagram</span>
+        <h2>Want to see more of the <i>glam?</i></h2>
+        <p>See our transformations, new wigs, behind-the-scenes and latest work on Instagram. Tap a post to watch it there.</p>
+      </div>
+      <div style="display:grid;gap:10px;justify-items:start">
+        <a class="handle" data-ig href="#" target="_blank" rel="noopener">@glamforgeofficial</a>
+        <a class="link-tert" data-ig href="#" target="_blank" rel="noopener">Visit us on Instagram <span class="arr">→</span></a>
+      </div>
+    </div>
+    <div class="grid" id="igGrid"></div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <div class="foot">
+        <div>
+          <div class="fm">Glamforge<br>Studios</div>
+          <p class="ft">Luxury in Every Strand.</p>
+          <a class="btn btn-primary" data-wa="women" href="#" target="_blank" rel="noopener" style="margin-top:22px">Book now</a>
+        </div>
+        <div>
+          <h4>Explore</h4>
+          <ul>
+            <li><a href="#back">Home</a></li>
+            <li><a href="#women" data-scroll="s-revamp">Revamp</a></li>
+            <li><a href="#women" data-scroll="s-shop">Shop wigs</a></li>
+            <li><a href="#women" data-scroll="s-services">Services</a></li>
+            <li><a href="#women" data-scroll="s-transformations">Transformations</a></li>
+            <li><a data-ig href="#" target="_blank" rel="noopener">Instagram</a></li>
+          </ul>
+        </div>
+        <div class="contact">
+          <h4>Talk to us</h4>
+          <a data-ig href="#" target="_blank" rel="noopener">Instagram: <b>@glamforgeofficial</b></a>
+          <span>WhatsApp: <b class="num">08064453004</b></span>
+          <span>Lagos based · Nationwide delivery</span>
+        </div>
+      </div>
+      <div class="foot-bottom"><span>© Glamforge Studios</span><span>Wig revamps, styling, colouring &amp; wig sales</span></div>
+    </div>
+  </footer>
+</div>
+
+<a class="fab off" id="fab" data-wa="women" href="#" target="_blank" rel="noopener" aria-label="Chat with Glamforge on WhatsApp">
+  <svg viewBox="0 0 32 32" aria-hidden="true"><use href="#i-wa"/></svg>
+  <span class="t"><span>Chat with us</span><span id="fabHover">Book your revamp</span></span>
+</a>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-wa" viewBox="0 0 32 32"><path fill="currentColor" d="M16 3C8.8 3 3 8.7 3 15.8c0 2.3.6 4.5 1.8 6.5L3 29l6.9-1.8c1.9 1 4 1.6 6.1 1.6 7.2 0 13-5.7 13-12.8S23.2 3 16 3zm0 23.5c-1.9 0-3.8-.5-5.4-1.5l-.4-.2-4.1 1.1 1.1-4-.3-.4c-1.1-1.7-1.6-3.6-1.6-5.6C5.3 10 10.1 5.3 16 5.3S26.7 10 26.7 15.8 21.9 26.5 16 26.5zm5.9-8c-.3-.2-1.9-.9-2.2-1-.3-.1-.5-.2-.7.2-.2.3-.8 1-1 1.2-.2.2-.4.2-.7.1-.3-.2-1.4-.5-2.6-1.6-1-.9-1.6-1.9-1.8-2.2-.2-.3 0-.5.1-.7l.5-.6c.2-.2.2-.4.3-.6.1-.2 0-.4 0-.6l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.2 1.1-1.2 2.7s1.2 3.2 1.4 3.4c.2.2 2.4 3.6 5.8 5 .8.3 1.4.5 1.9.7.8.3 1.5.2 2.1.1.6-.1 1.9-.8 2.2-1.5.3-.7.3-1.4.2-1.5-.1-.2-.3-.3-.6-.4z"/></symbol>
+  <symbol id="i-ig" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" d="M7 2.8h10A4.2 4.2 0 0 1 21.2 7v10a4.2 4.2 0 0 1-4.2 4.2H7A4.2 4.2 0 0 1 2.8 17V7A4.2 4.2 0 0 1 7 2.8z"/><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path fill="currentColor" d="M6 4l14 8-14 8z"/></symbol>
+</svg>
+
+<script>
+/* ============================================================
+   CONFIG
+   ============================================================ */
+const WHATSAPP = '2348064453004';
+const MESSAGES = {
+  women: "Hi Glamforge 👋🏽 I discovered your secret page and I’d like to book the ₦15,000 wig revamp offer (3 wigs).",
+  men:   "Hi Glamforge 👋🏽 I found your secret page and I'd like to get a wig for someone special.",
+  shop:  "Hi Glamforge 👋🏽 I found your secret page and I'd like to see your wigs for sale."
+};
+const INSTAGRAM = 'https://www.instagram.com/glamforgeofficial/';
+/* Posts from @glamforgeofficial — image files live in img/, links open the post on Instagram */
+const IG_POSTS = [
+  {img:'img/ig0.jpg', url:'p/DZNhOhaCNkQ/',   video:false, alt:'Glamforge post: You spent ₦80k–₦200k on that wig. Here’s why it’s not lasting.'},
+  {img:'img/ig1.jpg', url:'reel/DY7pZH-oSSA/', video:true,  alt:'Glamforge reel: Tired wig? Don’t throw it away, watch this'},
+  {img:'img/ig2.jpg', url:'p/DYwgVx8IkEf/',   video:false, alt:'Glamforge post: What we do, services list'},
+  {img:'img/ig7.jpg', url:'reel/DdHfI2qoNhs/', video:true,  alt:'Glamforge reel: Wait for the glam, curly wig styling'},
+  {img:'img/ig5.jpg', url:'reel/DdwtKxcoY0G/', video:true,  alt:'Glamforge reel: Curly wig after lace repair'},
+  {img:'img/ig6.jpg', url:'reel/DdrjgKSoRbf/', video:true,  alt:'Glamforge reel: Style this hair with me'},
+  {img:'img/ig8.jpg', url:'reel/DcO6148IdNh/', video:true,  alt:'Glamforge reel: Your wig can last longer if you stop doing this'},
+  {img:'img/ig11.jpg',url:'reel/DbJBnzyo7DY/', video:true,  alt:'Glamforge reel: Curly wig on a styled mannequin'},
+  {img:'img/ig9.jpg', url:'reel/DbvutqcopzB/', video:true,  alt:'Glamforge reel: She ate, client graduation look'}
+];
+
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const $ = s => document.querySelector(s);
+const waLink = (k, style) => `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(style ? `Hi Glamforge 👋🏽 I found your secret page and I'd like the price of the ${style} wig.` : MESSAGES[k])}`;
+
+function wireLinks(){
+  document.querySelectorAll('[data-wa]').forEach(a => a.href = waLink(a.dataset.wa, a.dataset.style));
+  document.querySelectorAll('[data-ig]').forEach(a => a.href = INSTAGRAM);
+}
+
+/* ---------- Instagram grid ---------- */
+(function buildIG(){
+  const g = $('#igGrid');
+  IG_POSTS.forEach(p => {
+    const a = document.createElement('a');
+    a.className = 'tile'; a.href = 'https://www.instagram.com/glamforgeofficial/' + p.url; a.target = '_blank'; a.rel = 'noopener';
+    a.setAttribute('aria-label', (p.video ? 'Watch on Instagram: ' : 'View on Instagram: ') + p.alt);
+    a.innerHTML = `<img src="${p.img}" alt="">
+      <svg class="ic" aria-hidden="true"><use href="#i-ig"/></svg>
+      ${p.video ? '<span class="play" aria-hidden="true"><svg><use href="#i-play"/></svg></span>' : ''}
+      <span class="ov"><b>@glamforgeofficial</b><span>${p.video ? 'Watch' : 'View'} on Instagram →</span></span>`;
+    g.appendChild(a);
+  });
+})();
+
+/* ---------- Painted hair on the two doors ---------- */
+const HAIR = {
+  doorW:{bg:['#F2A5BF','#7A1E47'],hue:338,sat:45,l:22,lv:34,wave:.09,freq:2.6,frizz:.6,sheen:.7,seed:7,dense:2.4},
+  doorM:{bg:['#C9A27A','#3B2214'],hue:28,sat:40,l:16,lv:28,wave:.03,freq:1.4,frizz:.4,sheen:.5,seed:3,dense:2.6}
+};
+function paint(cv){
+  const r = cv.getBoundingClientRect(); if (!r.width || !r.height) return;
+  const dpr = Math.min(devicePixelRatio || 1, 2), w = Math.round(r.width), h = Math.round(r.height);
+  if (cv._sz === w+'x'+h) return; cv._sz = w+'x'+h;
+  cv.width = w*dpr; cv.height = h*dpr;
+  const c = cv.getContext('2d'); c.setTransform(dpr,0,0,dpr,0,0);
+  const o = HAIR[cv.dataset.hair]; if (!o) return;
+  let s = o.seed*9973; const rnd = () => (s = (s*16807) % 2147483647) / 2147483647;
+  const g = c.createLinearGradient(0,0,0,h); g.addColorStop(0,o.bg[0]); g.addColorStop(1,o.bg[1]);
+  c.fillStyle = g; c.fillRect(0,0,w,h);
+  const n = Math.round(w*1.4/o.dense); c.lineCap = 'round';
+  for (let i=0;i<n;i++){
+    const x0 = (i/n)*w*1.4 - w*.2 + (rnd()-.5)*10, amp = o.wave*h*(.7+rnd()*.6), ph = rnd()*.6;
+    c.beginPath();
+    for (let y=-10; y<=h+10; y+=5){ const t=y/h; const x = x0 + Math.sin(t*Math.PI*o.freq+ph)*amp*(.35+t*.65) + (rnd()-.5)*o.frizz; y<=-10?c.moveTo(x,y):c.lineTo(x,y); }
+    c.strokeStyle = `hsla(${o.hue},${o.sat}%,${o.l+rnd()*o.lv}%,${.35+rnd()*.55})`; c.lineWidth = .6+rnd()*1.6; c.stroke();
+  }
+  c.globalCompositeOperation = 'screen';
+  const sg = c.createLinearGradient(0,h*.15,w,h*.55);
+  sg.addColorStop(0,'rgba(255,230,240,0)'); sg.addColorStop(.48,`rgba(255,236,244,${.4*o.sheen})`); sg.addColorStop(1,'rgba(255,230,240,0)');
+  c.fillStyle = sg; c.fillRect(0,0,w,h); c.globalCompositeOperation = 'source-over';
+}
+function paintVisible(){ document.querySelectorAll('canvas[data-hair]').forEach(cv => { if (cv.offsetParent) paint(cv); }); }
+let rz; addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => { document.querySelectorAll('canvas[data-hair]').forEach(cv => cv._sz=''); paintVisible(); sizeFx(); }, 150); });
+
+/* ---------- Particles (gold + blush) ---------- */
+const fx = $('#fx'), fc = fx.getContext('2d');
+let parts = [], running = false;
+function sizeFx(){ const d = Math.min(devicePixelRatio||1,2); fx.width = innerWidth*d; fx.height = innerHeight*d; fc.setTransform(d,0,0,d,0,0); }
+sizeFx();
+function boxPoint(){ const r = $('.box').getBoundingClientRect(); return {x:r.left+r.width/2, y:r.top+r.height*.32, w:r.width}; }
+const tints = ['255,214,150','255,190,210','255,240,220'];
+function spawnIdle(){
+  if (reduce || view !== 'home' || opened) return;
+  const b = boxPoint(); if (!b.w) return;
+  if (Math.random() < .35) parts.push({x:b.x+(Math.random()-.5)*b.w*.8, y:b.y+Math.random()*8, vx:(Math.random()-.5)*.15, vy:-.25-Math.random()*.45, life:1, decay:.004+Math.random()*.004, r:.8+Math.random()*1.6, c:tints[i3()]});
+}
+const i3 = () => Math.floor(Math.random()*3);
+function burst(){
+  const b = boxPoint();
+  for (let i=0;i<160;i++){
+    const a = -Math.PI/2 + (Math.random()-.5)*1.5, sp = 1.5+Math.random()*6;
+    parts.push({x:b.x+(Math.random()-.5)*b.w*.6, y:b.y, vx:Math.cos(a)*sp*.7, vy:Math.sin(a)*sp, life:1, decay:.006+Math.random()*.012, r:.9+Math.random()*2.8, g:.03, c:tints[i3()]});
+  }
+  loop();
+}
+function loop(){
+  if (running) return; running = true;
+  (function tick(){
+    spawnIdle();
+    fc.clearRect(0,0,innerWidth,innerHeight);
+    parts = parts.filter(p => p.life > 0);
+    for (const p of parts){
+      p.x += p.vx; p.y += p.vy; if (p.g){ p.vy += p.g; p.vx *= .985; } p.life -= p.decay;
+      const a = Math.max(p.life,0), gr = fc.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*4);
+      gr.addColorStop(0,`rgba(${p.c},${a})`); gr.addColorStop(.45,`rgba(${p.c},${a*.45})`); gr.addColorStop(1,`rgba(${p.c},0)`);
+      fc.fillStyle = gr; fc.beginPath(); fc.arc(p.x,p.y,p.r*4,0,7); fc.fill();
+    }
+    const keep = parts.length || (view==='home' && !opened && !reduce && !document.hidden);
+    if (keep) requestAnimationFrame(tick); else { running = false; fc.clearRect(0,0,innerWidth,innerHeight); }
+  })();
+}
+
+/* ---------- The box ---------- */
+const home = $('#home'), veil = $('#veil'), fab = $('#fab');
+let opened = false, opening = false, view = 'home', pendingScroll = null;
+try { opened = sessionStorage.getItem('gf-opened') === '1'; } catch(e) {}
+function save(){ try { sessionStorage.setItem('gf-opened','1'); } catch(e) {} }
+
+function showQuestion(){
+  $('#intro').hidden = true; $('#question').hidden = false;
+  home.classList.add('is-open'); home.classList.remove('is-opening');
+  fab.classList.remove('off');
+  requestAnimationFrame(paintVisible);
+}
+function openBox(){
+  if (opened || opening) return;
+  opening = true;
+  if (reduce){ opened = true; save(); showQuestion(); opening = false; return; }
+  home.classList.add('is-opening');
+  setTimeout(burst, 650);
+  setTimeout(() => { veil.classList.remove('men'); veil.classList.add('on'); }, 800);
+  setTimeout(() => { opened = true; save(); showQuestion(); $('#question').scrollIntoView({block:'center'}); veil.classList.remove('on'); opening = false; }, 1250);
+}
+$('#boxBtn').addEventListener('click', openBox);
+$('#openCta').addEventListener('click', openBox);
+
+/* ---------- Doors → pages ---------- */
+document.querySelectorAll('.door').forEach(d => d.addEventListener('click', e => {
+  e.preventDefault();
+  const to = d.dataset.door;
+  if (reduce){ location.hash = to; return; }
+  $('#doors').classList.add('choosing'); d.classList.add('chosen');
+  veil.classList.toggle('men', to === 'men');
+  setTimeout(() => veil.classList.add('on'), 250);
+  setTimeout(() => { location.hash = to; }, 700);
+}));
+
+/* ---------- Router: #women / #men, blank = the secret ---------- */
+function route(){
+  const h = location.hash.slice(1);
+  view = (h === 'women' || h === 'men') ? h : 'home';
+  home.hidden = view !== 'home';
+  $('#women').hidden = view !== 'women';
+  $('#men').hidden = view !== 'men';
+  $('#shared').hidden = view === 'home';
+  $('#doors').classList.remove('choosing');
+  document.querySelectorAll('.door.chosen').forEach(d => d.classList.remove('chosen'));
+  if (view === 'home'){
+    if (opened) showQuestion(); else { fab.classList.add('off'); loop(); }
+  } else {
+    const el = $('#'+view); el.classList.remove('view'); void el.offsetWidth; el.classList.add('view');
+    fab.href = waLink(view);
+    $('#fabHover').textContent = view === 'men' ? 'Ask about a wig' : 'Book your revamp';
+    fab.classList.remove('off');
+  }
+  requestAnimationFrame(() => {
+    paintVisible();
+    if (pendingScroll){ const t = document.getElementById(pendingScroll); pendingScroll = null; t && t.scrollIntoView({behavior: reduce?'auto':'smooth'}); }
+    else scrollTo(0,0);
+    setTimeout(() => veil.classList.remove('on'), 60);
+  });
+}
+addEventListener('hashchange', route);
+document.addEventListener('click', e => {
+  const back = e.target.closest('a[href="#back"]');
+  if (back){ e.preventDefault(); history.pushState(null,'',location.pathname + location.search); route(); return; }
+  const sc = e.target.closest('a[data-scroll]');
+  if (sc){ e.preventDefault(); pendingScroll = sc.dataset.scroll; if (location.hash === '#women') route(); else location.hash = 'women'; }
+});
+addEventListener('popstate', route);
+
+/* ---------- Before / after ---------- */
+$('#baRange').addEventListener('input', e => $('#ba').style.setProperty('--pos', e.target.value + '%'));
+
+document.addEventListener('visibilitychange', () => { if (!document.hidden && view==='home') loop(); });
+wireLinks();
+route();
+</script>
+
+</body>
+</html>
